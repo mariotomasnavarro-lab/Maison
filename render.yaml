@@ -1,0 +1,23 @@
+# Déploiement Web Service Render. Le plan free n’offre PAS de disque persistant.
+# Pour des données durables, remplacer plan: free par plan: starter et ajouter le disque ci-dessous.
+services:
+  - type: web
+    name: maison-mosaique-web
+    runtime: docker
+    plan: free
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: PORT
+        value: 10000
+      - key: DATA_DIR
+        value: /tmp/data
+      - key: SESSION_SECRET
+        generateValue: true
+# Disque persistant (payant chez Render, non disponible pour le plan free) :
+#    disk:
+#      name: maison-mosaique-data
+#      mountPath: /data
+#      sizeGB: 1
+# Puis définir DATA_DIR=/data et plan: starter.

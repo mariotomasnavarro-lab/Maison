@@ -1,0 +1,31 @@
+MAISON MOSAÏQUE — VERSION WEB HÉBERGÉE
+=======================================
+
+Cette édition utilise un serveur Node.js et une base SQLite partagée. Tous les appareils ouvrent la même adresse HTTPS. Le dossier ne contient aucune famille ni donnée préremplie au premier lancement.
+
+DÉPLOIEMENT PAS À PAS (Render)
+1. Créez un compte GitHub (github.com) et un compte Render (render.com).
+2. Dans GitHub, créez un nouveau dépôt privé, puis envoyez-y le contenu de ce dossier (sans data/ ni node_modules). Vous pouvez aussi importer le ZIP et téléverser les fichiers.
+3. Dans Render, choisissez New > Blueprint, reliez votre dépôt et sélectionnez render.yaml. Validez la création du service.
+4. Render construit l’application. À la fin, ouvrez l’URL attribuée, de forme https://maison-mosaique-web.onrender.com. L’application répond par cette adresse sur tous vos appareils. La première personne crée la famille et devient administratrice.
+5. Créez un mot de passe robuste. Invitez ensuite les autres membres avec un lien/QR code. Maximum 4 personnes par famille, dont au plus 2 administrateurs.
+
+INSTALLER SUR L’ÉCRAN D’ACCUEIL
+iPad/iPhone : ouvrez l’URL dans Safari > bouton Partager > Sur l’écran d’accueil > Ajouter.
+Android : ouvrez l’URL dans Chrome > menu ⋮ > Installer l’application (ou Ajouter à l’écran d’accueil).
+Sur ordinateur : ouvrez le lien dans Chrome/Edge; l’icône d’installation peut apparaître dans la barre d’adresse ou le menu.
+
+SAUVEGARDE ET STOCKAGE
+La base SQLite se trouve dans DATA_DIR, fichier famille.db. Avec le disque monté, une sauvegarde consiste à copier tout le dossier data (arrêter le service avant la copie pour éviter une base incohérente). Gardez au moins une copie hors du serveur et protégez-la : elle contient des données personnelles et des photos. N’ajoutez jamais le dossier data aux dépôts Git.
+
+LIMITES GRATUITES — À LIRE AVANT D’UTILISER
+Le modèle render.yaml est prêt à lancer sur le plan gratuit, mais le stockage est alors éphémère (/tmp/data) : il peut être effacé lors d’un redéploiement, d’un redémarrage ou d’une mise en veille. Les services gratuits peuvent aussi se mettre en veille après inactivité et être lents au premier réveil. Le disque persistant Render n’est pas inclus gratuitement; le fichier commente la configuration d’un disque Starter payant. Les tarifs et quotas évoluent : vérifiez la page de tarification Render avant de publier.
+Si la persistance sans frais est indispensable, hébergez le conteneur sur un ordinateur personnel toujours allumé ou un NAS avec volume Docker sauvegardé, accessible via HTTPS (par exemple tunnel sécurisé). Cela n’est pas un hébergement cloud gratuit permanent et exige que l’appareil reste en ligne. Évitez le plan Render gratuit pour des souvenirs importants sans sauvegarde externe fréquente.
+
+SÉCURITÉ ET CONFIGURATION
+Les mots de passe sont hachés avec bcrypt; les connexions sont limitées en débit. Les réponses HTTP ajoutent des en-têtes de sécurité. SESSION_SECRET doit rester identique entre redémarrages et rester privé. Sur Render, il est généré automatiquement par le Blueprint. DATA_DIR doit pointer sur le point de montage du disque si vous en ajoutez un. PORT est fourni par la plateforme.
+
+DÉVELOPPEMENT / DOCKER
+Node.js 22.5 ou supérieur est nécessaire (utilisation de SQLite intégré à Node). Pour Docker : docker build -t maison-mosaique . puis docker run -p 3000:3000 -e SESSION_SECRET='une-cle-longue' -e DATA_DIR=/data -v maison-data:/data maison-mosaique. En local, copiez .env.example vers .env, modifiez SESSION_SECRET puis lancez npm install et npm start.
+
+Le service worker met en cache uniquement l’interface statique, jamais /api. Une connexion Internet est donc nécessaire pour les données partagées.
